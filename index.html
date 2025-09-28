@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Rifas EL CUPON DE LA FORTUNA - La mejor rifa online en Venezuela</title>
+  <meta name="description" content="Participa en Rifas El Boom, compra tus tickets y gana premios increíbles. ¡Fácil, rápido y seguro!">
+  <link rel="stylesheet" href="style.css"/>
+</head>
+<body>
+  <div id="app">
+
+    <!-- ========== INICIO ========== -->
+    <section id="inicio">
+      <div class="logos-superiores">
+    <img src="" alt="Logo 1">
+    <img src="https://i.postimg.cc/cJVyPhww/SUPER-GANA.png" alt="Logo 2">
+   </div>
+      <button id="btnToggleTheme" onclick="toggleTheme()">🌙 </button>
+
+      <img src="https://i.postimg.cc/DZq2GXY2/Chat-GPT-Image-19-sept-2025-18-43-40.png"
+           alt="Logo" id="logoRifa"
+           style="width:220px;display:block;margin:0 auto 12px">
+
+      <div class="card" style="background:#3d0a0a;border-radius:12px;padding:16px;box-shadow:0 4px 20px #0008;max-width:640px;margin:0 auto">
+        <img id="fotoInicio" class="img-inicio" style="width:100%;max-width:640px;border-radius:12px;display:block;margin:0 auto 12px;box-shadow:0 2px 16px #0008;">
+      
+        <h2 id="tituloRifa" style="margin:8px 0;color:var(--brand)">COMBO SOLUCIÓN #6</h2>
+        <div style="font-size:.9rem;color:#b8c1cc;display:flex;align-items:center;gap:8px;margin-bottom:8px">
+          <span>🎯 Boleto</span>
+          <span id="precioUnit" style="font-weight:bold;color:#fff">—</span>
+        </div>
+      <p style="margin:4px 0;color:var(--brand);font-size:12px;">
+  selecciona la cantidad de tickets que desees comprar
+</p>
+
+
+        <!-- Cantidades rápidas -->
+        <div id="cantidadGrid" style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px">
+          <button class="qbtn" onclick="seleccionarCantidad(2)">2</button>
+          <button class="qbtn qpop" onclick="seleccionarCantidad(5)">5<br><small>Más popular</small></button>
+          <button class="qbtn" onclick="seleccionarCantidad(10)">10</button>
+          <button class="qbtn" onclick="seleccionarCantidad(15)">15</button>
+          <button class="qbtn" onclick="seleccionarCantidad(25)">25</button>
+          <button class="qbtn" onclick="seleccionarCantidad(50)">50</button>
+        </div>
+
+        <!-- Control +/- -->
+        <div style="display:flex;align-items:center;gap:10px;margin:12px 0">
+          <button onclick="decrementar()" class="qctrl">−</button>
+          <input id="cantidadInput" type="number" min="1" value="2" style="width:80px;text-align:center;border-radius:8px;padding:8px;border:1px solid #333;background:#0f1317;color:#fff">
+          <button onclick="incrementar()" class="qctrl">+</button>
+          <div style="margin-left:auto;font-weight:bold">Total: <span id="montoTotal">—</span></div>
+        </div>
+
+        <button onclick="continuarCompra()" style="width:100%;padding:12px;border:none;border-radius:10px;background#ffcc00 ;font-weight:700">
+          Participar
+        </button>
+        
+<button id="btnConsultar" onclick="mostrarConsulta()">Consultar</button>
+
+        <!-- Botones sociales -->
+        <div id="botonesSociales" style="display:flex;gap:8px;justify-content:center;margin-top:12px;flex-wrap:wrap">
+          <button id="btnWhatsappGrupo" onclick="window.open('https://chat.whatsapp.com/DXCJrKGdiasDcHxRbjJDpb?mode=ac_t','_blank')" style="background:#06402B;color:#fff;border:none;border-radius:6px;padding:10px 14px">Grupo WhatsApp</button>
+         
+
+          <button id="btnSoporte" onclick="window.open('https://wa.me/584121890444','_blank')" style="background:#25D366;color:#fff;border:none;border-radius:6px;padding:10px 14px">Soporte</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ========== REGISTRO ========== -->
+    <section id="registro" style="display:none;">
+      <h2>Inscripción</h2>
+      <input id="nombre" placeholder="Nombre completo"/>
+      <input id="telefono" placeholder="Teléfono (+58...)"/>
+      <input id="cedula" placeholder="Cédula"/>
+      <input id="email" placeholder="Correo"/>
+      <button onclick="validarRegistro()">Continuar</button>
+      <button class="btn-inicio" onclick="irInicio()">Inicio</button>
+    </section>
+
+    <!-- ========== PAGO ========== -->
+    <section id="pago" style="display:none;">
+      <h2>Pago</h2>
+      <p>Realiza tu pago móvil y sube el comprobante:</p>
+      <div id="montoPago" style="font-weight:bold;margin-bottom:10px;"></div>
+      <h3>Pago Móvil</h3>
+      <p>Banco: Banesco(0134)</p>
+      <p>Teléfono:0412-1890444</p>
+      <p>Cédula: 5912747</p>
+      <label>Últimos 4 de la referencia</label>
+      <input type="text" id="referencia" maxlength="4" pattern="\d{4}" placeholder="Ej: 1234">
+      <input type="file" id="comprobante"/>
+      <button onclick="subirComprobante()">Enviar</button>
+      <button class="btn-inicio" onclick="irInicio()">Inicio</button>
+    </section>
+
+    <!-- ========== CONSULTA ========== -->
+    <section id="consulta" style="display:none;">
+      <h2>Consulta tus tickets</h2>
+      <input id="consultaCedula" placeholder="Cédula"/>
+      <button onclick="consultarTickets()">Consultar</button>
+      <ul id="resultadosConsulta"></ul>
+      <button class="btn-inicio" onclick="irInicio()">Inicio</button>
+    </section>
+
+    <!-- ========== ADMIN LOGIN ========== -->
+    <section id="adminLogin" style="display:none;">
+      <h2>Panel Admin</h2>
+      <input id="adminCorreo" placeholder="Correo"/>
+      <input id="adminClave" type="password" placeholder="Clave"/>
+      <button onclick="loginAdmin()">Entrar</button>
+      <button class="btn-inicio" onclick="irInicio()">Inicio</button>
+    </section>
+
+    <!-- ========== ADMIN PANEL ========== -->
+    <section id="adminPanel" style="display:none;">
+      <div style="margin-bottom:15px;">
+        <div style="margin-bottom:15px;">
+          <!-- Botón para mostrar/ocultar -->
+<button id="btnMostrarCambioClave" onclick="toggleCambioClave()" style="margin:12px 0;">
+  🔐 Cambiar contraseña
+</button>
+
+<!-- Caja oculta -->
+<div id="cambioClaveBox" class="admin-card hidden" style="margin:16px 0;">
+  <h3>Cambiar contraseña (admins)</h3>
+  <input id="adminCorreoCambio" placeholder="Correo admin" />
+  <input id="adminPassActual2" type="password" placeholder="Contraseña actual" />
+  <input id="adminPassNueva2"  type="password" placeholder="Nueva contraseña (mín. 8)" />
+  <input id="adminPassRepite2" type="password" placeholder="Repite la nueva contraseña" />
+  <div style="display:flex; gap:8px; margin-top:8px;">
+    <button onclick="adminCambiarClaveTabla()">Guardar</button>
+    <button class="btn-inicio" onclick="toggleCambioClave()">Cerrar</button>
+  </div>
+</div>
+
+
+  <label for="nuevoTitulo">Título de la rifa:</label>
+  <input type="text" id="nuevoTitulo" style="width:200px;display:inline;"/>
+  <button onclick="guardarTitulo()">Guardar</button>
+</div>
+
+        <!-- Foto de inicio / premio -->
+<div class="admin-card" style="margin-bottom:16px;">
+  <h3 style="margin:0 0 8px 0;">Foto del premio (inicio)</h3>
+
+  <div style="display:flex; gap:12px; align-items:center; flex-wrap:wrap;">
+    <input type="file" id="fotoInicioInput" accept="image/*"/>
+    <button onclick="subirFotoInicio()">Subir foto</button>
+    <button onclick="borrarFotoInicio()" style="background:#ff4d4f;color:#fff;">Borrar foto</button>
+    <span id="fotoInicioEstado" style="opacity:.8;"></span>
+  </div>
+
+  <div style="margin-top:12px;">
+    <img id="previewFotoInicio" style="max-width:420px; border-radius:12px; box-shadow:0 8px 24px #0006; display:none;">
+  </div>
+</div>
+
+<!-- Buscador por ticket -->
+<div class="card" style="margin-top:12px">
+  <h3 style="margin:0 0 8px 0;">🔎 Buscar por ticket</h3>
+  <div style="display:flex; gap:8px; align-items:center; flex-wrap:wrap;">
+    <input id="ticketBuscar" type="number" min="0" placeholder="Ej: 1234" style="max-width:240px;">
+    <button onclick="buscarTicket()">Buscar ticket</button>
+  </div>
+  <div id="resultadoTicket" style="margin-top:10px; font-size:.95rem; color:#cfe6ff;"></div>
+</div>
+
+        <label for="nuevoPrecioTicket">Precio del ticket:</label>
+        <input type="number" id="nuevoPrecioTicket" min="1" style="width:70px;display:inline;"/>
+        <button onclick="guardarPrecioTicket()">Guardar</button>
+      </div>
+      <div style="margin-bottom:15px;">
+      
+        <label for="cantidadTicketsMostrar">Tickets a mostrar:</label>
+        <input type="number" id="cantidadTicketsMostrar" min="1" style="width:70px;display:inline;"/>
+        <button onclick="guardarCantidadTickets()">Guardar</button>
+      </div>
+      <button onclick="reiniciarRifa()" style="background:#ff4444;color:#fff;">
+  🔄 Reiniciar Todo
+</button>
+      <p id="totales"></p>
+      <h2>Comprobantes</h2>
+      <div id="listaComprobantes"></div>
+      <button onclick="cerrarAdmin()">Cerrar Admin</button>
+      
+
+    </section>
+
+    <!-- ========== SORTEADOR ========== -->
+    <section id="sorteador" style="display:none;">
+      <h2>🎰 Sorteador</h2>
+      <div id="maquinaSorteo">000000</div>
+      <button onclick="iniciarSorteo()">Iniciar Sorteo</button>
+      <div id="ganador"></div>
+      <button class="btn-inicio" onclick="irInicio()">Inicio</button>
+    </section>
+
+    <!-- Botón admin oculto -->
+    <button id="btnAdmin" onclick="mostrarAdmin()" style="display:none;">Admin</button>
+  </div>
+
+  <!-- ========== LIBRERÍAS ========== -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="app.js"></script>
+</body>
+</html>
