@@ -1,0 +1,527 @@
+/* ===========================
+   Tema rápido & moderno (AJUSTADO PARA EL LOGO)
+   =========================== */
+:root {
+  /* Paleta base */
+  --bg: #2b0000;        /* rojo oscuro de fondo */
+  --bg-2: #3d0a0a;
+  --surface: #4d0f0f;   /* variaciones */
+  --surface-2: #5c1010;
+  --card: #e30909;
+
+  --text: #fff8d0;      /* dorado claro para textos */
+  --muted: #ffcc66;     /* dorado suave */
+
+  --brand: #ffcc00;     /* dorado principal (botones, acentos) */
+  --brand-2: #ff4343;   /* rojo brillante secundario */
+
+  --success: #00ff66;   /* verde suave */
+  --warning: #ffb200;   /* amarillo suave */
+  --danger: #ff4343;    /* rojo brillante para alertas */
+
+  --ring: #7dd3fc;
+
+  --radius: 14px;
+  --radius-sm: 10px;
+
+  --shadow-1: 0 10px 30px rgba(0,0,0,.35);
+  --shadow-2: 0 6px 18px rgba(0,0,0,.28);
+
+  --tr-fast: 160ms cubic-bezier(.22,.61,.36,1);
+  --tr-slow: 260ms cubic-bezier(.22,.61,.36,1);
+}
+
+/* ===========================
+   Modo oscuro (sin cambiar la paleta de colores)
+   =========================== */
+body.dark {
+  --bg-color: #e30505;   /* Mantener rojo oscuro */
+  --text-color: #fff8d0; /* Dorado claro */
+  --card-bg: #e30505;    /* Fondo de tarjetas */
+  --btn-bg: #ffcc00;     /* Botones dorados */
+  --btn-text: #2b0000;   /* Texto oscuro sobre dorado */
+  --shadow-1: 0 10px 30px rgba(0,0,0,.45); /* Sombra más suave */
+  --shadow-2: 0 6px 18px rgba(0,0,0,.35);  /* Sombra más suave */
+}
+
+body {
+  background: var(--bg-color); /* Asegura que el color de fondo no cambie al negro */
+  color: var(--text-color);
+  font-family: 'Segoe UI', Arial, sans-serif;
+  margin: 0;
+  min-height: 100vh;
+  transition: background .3s, color .3s;
+}
+
+#app {
+  max-width: 860px;
+  margin: 24px auto 64px;
+  padding: 20px;
+}
+
+/* ===========================
+   Títulos
+   =========================== */
+h1, h2, h3 {
+  margin: 0 0 10px;
+  line-height: 1.18;
+  letter-spacing: .2px;
+}
+h1 {
+  font-size: clamp(26px, 3.3vw, 36px);
+  color: var(--brand);
+}
+h2 {
+  font-size: clamp(20px, 2.6vw, 26px);
+  color: var(--brand);
+}
+
+/* ===========================
+   Tarjetas, imágenes
+   =========================== */
+.card {
+  background: linear-gradient(180deg, var(--card), var(--surface));
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-1);
+  padding: 18px;
+  border: 1px solid rgba(255,255,255,.04);
+  animation: fadeIn .35s var(--tr-fast);
+}
+
+.img-inicio {
+  width: 100%;
+  display: block;
+  border-radius: 12px;
+  box-shadow: var(--shadow-2);
+  transform: translateZ(0);
+  transition: transform var(--tr-slow), box-shadow var(--tr-slow);
+}
+.img-inicio:hover {
+  transform: translateY(-2px) scale(1.01);
+  box-shadow: 0 12px 36px rgba(0,0,0,.45);
+}
+
+/* ===========================
+   Inputs & botones
+   =========================== */
+input, button {
+  font: inherit;
+}
+
+input {
+  width: 100%;
+  background: var(--bg-2);
+  color: var(--text);
+  border: 1px solid rgba(255,255,255,.08);
+  border-radius: var(--radius-sm);
+  padding: 12px 12px;
+  margin: 7px 0;
+  outline: none;
+  transition: border-color var(--tr-fast), box-shadow var(--tr-fast), background var(--tr-fast);
+}
+input::placeholder {
+  color: #9fb3c880;
+}
+input:focus {
+  border-color: var(--ring);
+  box-shadow: 0 0 0 4px rgba(125,211,252,.15);
+}
+
+button {
+  cursor: pointer;
+  border: none;
+  color: #0b0f14;
+  background: var(--brand);
+  font-weight: 800;
+  border-radius: var(--radius-sm);
+  padding: 12px 16px;
+  transition: transform var(--tr-fast), box-shadow var(--tr-fast), background var(--tr-fast), color var(--tr-fast), opacity var(--tr-fast);
+  box-shadow: 0 8px 20px rgba(0,255,215,.12);
+}
+button:hover {
+  transform: translateY(-1px);
+  background: var(--brand-2);
+  color: #fff;
+}
+button:active {
+  transform: translateY(0);
+  opacity: .9;
+}
+button:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 4px rgba(125,211,252,.25);
+}
+
+/* Botón gris secundario */
+.btn-inicio {
+  background: #2a3440;
+  color: var(--text);
+  box-shadow: 0 8px 18px rgba(0,0,0,.2);
+}
+.btn-inicio:hover {
+  background: #344356;
+}
+
+/* ===========================
+   Selector de cantidad
+   =========================== */
+#cantidadGrid {
+  margin: 10px 0 2px;
+}
+
+.qbtn {
+  background: #24303b;
+  color: #e6f1ff;
+  border: 1px solid rgba(255,255,255,.06);
+  border-radius: 12px;
+  padding: 14px 10px;
+  font-weight: 800;
+  text-align: center;
+  box-shadow: 0 6px 14px rgba(0,0,0,.18);
+  transition: transform var(--tr-fast), background var(--tr-fast), color var(--tr-fast), box-shadow var(--tr-fast), border-color var(--tr-fast);
+  will-change: transform;
+}
+.qbtn small {
+  display: block;
+  font-weight: 700;
+  font-size: 12px;
+  color: var(--muted);
+  margin-top: 2px;
+}
+.qbtn:hover {
+  background: var(--brand);
+  color: #0b0f14;
+  border-color: transparent;
+  box-shadow: 0 10px 24px rgba(0,255,215,.18);
+  transform: translateY(-1px);
+}
+.qbtn:active {
+  transform: translateY(0);
+}
+.qpop {
+  outline: 2px solid rgba(0,255,215,.35);
+  outline-offset: 2px;
+}
+
+/* Controles +/- */
+.qctrl {
+  width: 42px;
+  height: 42px;
+  display: grid;
+  place-items: center;
+  background: #24303b;
+  color: #fff;
+  border-radius: 10px;
+  border: 1px solid rgba(255,255,255,.06);
+  transition: background var(--tr-fast), transform var(--tr-fast), border-color var(--tr-fast);
+}
+.qctrl:hover {
+  background: #2c3a47;
+  transform: translateY(-1px);
+}
+.qctrl:active {
+  transform: translateY(0);
+}
+
+/* Precio/total */
+#montoTotal {
+  color: #fff;
+}
+#precioUnit {
+  color: #fff;
+}
+
+/* ===========================
+   Consulta
+   =========================== */
+#resultadosConsulta {
+  list-style: none;
+  margin: 12px 0 0;
+  padding: 0;
+  display: grid;
+  gap: 8px;
+}
+#resultadosConsulta li {
+  background: var(--surface-2);
+  border: 1px solid rgba(255,255,255,.06);
+  border-radius: 12px;
+  padding: 12px 14px;
+  color: var(--text);
+  box-shadow: var(--shadow-2);
+  animation: rise .35s var(--tr-fast);
+}
+
+/* ===========================
+   Admin / comprobantes
+   =========================== */
+.comprobante-card {
+  background: linear-gradient(180deg, var(--surface-2), var(--surface));
+  border: 1px solid rgba(255,255,255,.06);
+  border-radius: 14px;
+  padding: 14px;
+  margin: 10px 0;
+  box-shadow: var(--shadow-2);
+  transition: transform var(--tr-fast), box-shadow var(--tr-fast), border-color var(--tr-fast);
+}
+.comprobante-card:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 12px 28px rgba(0,0,0,.35);
+  border-color: rgba(255,255,255,.12);
+}
+.comprobante-card a {
+  color: var(--brand);
+  text-decoration: none;
+  font-weight: 700;
+}
+.comprobante-card a:hover {
+  color: var(--brand-2);
+}
+
+.acciones {
+  display: block;
+  margin-top: 8px;
+}
+.acciones button {
+  margin-right: 6px;
+  margin-top: 6px;
+  padding: 10px 12px;
+}
+.pendiente {
+  color: var(--danger);
+  font-weight: 800;
+}
+.aprobado {
+  color: var(--success);
+  font-weight: 800;
+}
+.rechazado {
+  color: var(--warning);
+  font-weight: 800;
+}
+
+/* ===========================
+   Social buttons (inicio)
+   =========================== */
+#botonesSociales {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  justify-content: center;
+  margin-top: 12px;
+}
+#botonesSociales button {
+  color: #fff;
+  border-radius: 10px;
+  border: 1px solid rgba(255,255,255,.06);
+  padding: 10px 14px;
+  transition: transform var(--tr-fast), box-shadow var(--tr-fast), background var(--tr-fast);
+}
+#btnWhatsappGrupo {
+  background: #06402B;
+}
+#btnWhatsappGrupo:hover {
+  background: #08583b;
+  transform: translateY(-1px);
+}
+#btnSoporte {
+  background: #25D366;
+  color: #0b0f14;
+}
+#btnSoporte:hover {
+  background: #1fb65a;
+  transform: translateY(-1px);
+}
+
+/* ===========================
+   Scrollbar (WebKit)
+   =========================== */
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+::-webkit-scrollbar-track {
+  background: #0b0f14;
+}
+::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, var(--brand), var(--brand-2));
+  border-radius: 20px;
+}
+::-webkit-scrollbar-thumb:hover {
+  filter: brightness(.95);
+}
+
+/* ===========================
+   Utilidades
+   =========================== */
+.center {
+  text-align: center;
+}
+.hidden {
+  display: none !important;
+}
+#btnAdmin {
+  position: fixed;
+  right: 16px;
+  bottom: 16px;
+  z-index: 10;
+}
+
+/* ===========================
+   Responsivo
+   =========================== */
+@media (max-width: 720px) {
+  #app {
+    padding: 14px;
+  }
+  .card {
+    padding: 14px;
+    border-radius: 12px;
+  }
+  #cantidadGrid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+@media (max-width: 420px) {
+  .qbtn {
+    padding: 12px 8px;
+  }
+  .qctrl {
+    width: 38px;
+    height: 38px;
+  }
+}
+
+/* ===========================
+   Animaciones
+   =========================== */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+@keyframes rise {
+  from {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+.hero-premio {
+  padding: 0;
+  overflow: hidden;
+}
+
+#fotoInicio {
+  display: block;
+  width: 100%;
+  max-height: 340px; /* ajusta a tu gusto */
+  object-fit: cover; /* recorte elegante */
+  border-radius: 14px;
+  box-shadow: 0 12px 32px rgba(0,0,0,.35);
+  transition: transform .28s cubic-bezier(.22,.61,.36,1);
+}
+#fotoInicio:hover {
+  transform: translateY(-2px) scale(1.01);
+}
+
+@media (max-width: 720px) {
+  #fotoInicio {
+    max-height: 240px;
+    border-radius: 12px;
+  }
+}
+
+#btnConsultar {
+  background: #ff9800; /* naranja */
+  color: #fff;
+  font-weight: bold;
+}
+#btnConsultar {
+  background: #ffcc00;
+  color: #2b0000;
+}
+
+:root {
+  --bg-color: #e30909; /* rojo oscuro */
+  --text-color: #fff8d0; /* dorado claro */
+  --card-bg:#e30909 ; /* fondo de tarjetas */
+  --btn-bg: #ffcc00; /* botones dorados */
+  --btn-text: #2b0000; /* texto oscuro sobre dorado */
+}
+
+body.dark {
+  --bg-color: #3d0a0a; /* rojo oscuro */
+  --text-color: #fff8d0; /* dorado claro */
+  --card-bg: #e30909; /* fondo de tarjetas */
+  --btn-bg: #ffcc00; /* botones dorados */
+  --btn-text: #2b0000; /* texto oscuro sobre dorado */
+}
+
+body {
+  background: var(--bg-color);
+  color: var(--text-color);
+  font-family: 'Segoe UI', Arial, sans-serif;
+  margin: 0;
+  min-height: 100vh;
+  transition: background .3s, color .3s;
+}
+
+#app {
+  background: var(--card-bg);
+  border-radius: 16px;
+  box-shadow: 0 6px 32px #0003;
+  padding: 24px 16px 40px 16px;
+  transition: background .3s;
+}
+
+button {
+  background: var(--btn-bg);
+  color: var(--btn-text);
+  border: none;
+  border-radius: 7px;
+  padding: 10px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background .25s, color .25s;
+}
+
+body.invert {
+  filter: invert(1) hue-rotate(180deg);
+}
+
+body.invert img,
+body.invert video,
+body.invert canvas,
+body.invert svg,
+body.invert picture,
+body.invert .no-invert {
+  filter: invert(1) hue-rotate(180deg);
+}
+#app {
+  position: relative;
+}
+
+.logos-superiores {
+  position: absolute;
+  top: 10px; /* distancia desde arriba */
+  right: 10px; /* esquina derecha */
+  display: flex;
+  gap: 10px; /* espacio entre logos */
+}
+
+.logos-superiores img {
+  height: 60px; /* tamaño de cada logo */
+  transition: transform 0.3s;
+}
+
+.logos-superiores img:hover {
+  transform: scale(1.1); /* efecto zoom */
+}
