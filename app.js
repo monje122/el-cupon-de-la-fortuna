@@ -1,5 +1,5 @@
-const supabaseUrl = "https://wciqitubyyeiinibzypq.supabase.co";
-const supabaseKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6IndjaXFpdHVieXllaWluaWJ6eXBxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTg1NTkzOTksImV4cCI6MjA3NDEzNTM5OX0.77-1ZPC2hwU4ATSU0CVbq-qqYgCm9QfBwtZc-E633uU";
+const supabaseUrl = "https://kjvdpaqjxmsncanfftqq.supabase.co";
+const supabaseKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImtqdmRwYXFqeG1zbmNhbmZmdHFxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTkyNTYyMzQsImV4cCI6MjA3NDgzMjIzNH0.1gfKsUcTl5DUJGIBvoXp9S6_hzaObb0gzqa0WoIMGM8";
 const supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
 
 /* ========= ESTADO GLOBAL ========= */
