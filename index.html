@@ -78,9 +78,10 @@
           <div style="margin-left:auto;font-weight:bold">Total: <span id="montoTotal">—</span></div>
         </div>
 
-        <button onclick="continuarCompra()" style="width:100%;padding:12px;border:none;border-radius:10px;background#ffcc00 ;font-weight:700">
-          Participar
-        </button>
+        <button id="btnParticipar" onclick="continuarCompra()" style="width:100%;padding:12px;border:none;border-radius:10px;background#ffcc00 ;font-weight:700">
+  Participar
+</button>
+
         
 <button id="btnConsultar" onclick="mostrarConsulta()">Consultar</button>
 
@@ -149,6 +150,25 @@
   🔐 Cambiar contraseña
 </button>
 
+   <div class="card" style="margin-top:12px">
+  <h3 style="margin:0 0 8px 0;">🧰 Estado de ventas</h3>
+
+  <div style="display:flex; align-items:center; gap:10px;">
+    <span>Estado:</span>
+    <span id="estadoVentasBadge" class="badge-ventas abierta">Abiertas</span>
+  </div>
+
+  <div style="display:flex; gap:10px; margin-top:10px;">
+    <button onclick="abrirVentas()">🔓 Abrir ventas</button>
+    <button class="btn-danger" onclick="cerrarVentas()">🔒 Cerrar ventas</button>
+  </div>
+
+  <p style="font-size:.9rem; opacity:.85; margin-top:8px;">
+    Al cerrar ventas, el botón <b>Participar</b> del Home se desactiva y se bloquea el flujo de compra.
+  </p>
+</div>
+       
+          
 <!-- Caja oculta -->
 <div id="cambioClaveBox" class="admin-card hidden" style="margin:16px 0;">
   <h3>Cambiar contraseña (admins)</h3>
