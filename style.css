@@ -525,3 +525,39 @@ body.invert .no-invert {
 .logos-superiores img:hover {
   transform: scale(1.1); /* efecto zoom */
 }
+/* ===== Barra de progreso (Rifa) ===== */
+.progress{
+  width: 100%;
+  height: 14px;
+  background: rgba(255,255,255,.08);
+  border: 1px solid rgba(255,255,255,.12);
+  border-radius: 999px;
+  overflow: hidden;
+  box-shadow: inset 0 2px 8px rgba(0,0,0,.25);
+  position: relative;
+}
+
+.progress__bar{
+  height: 100%;
+  width: 0%;
+  border-radius: 999px;
+  background: linear-gradient(90deg, var(--brand), var(--brand-2)); /* vendidos */
+  transition: width .4s var(--tr-fast);
+  box-shadow: 0 4px 12px rgba(0,0,0,.25);
+  position: absolute;
+  left: 0; top: 0;
+}
+
+/* reservados (hold) = ámbar suave por debajo */
+.progress__bar--reserved{
+  background: linear-gradient(90deg, rgba(255,178,0,.9), rgba(255,204,0,.9));
+  z-index: 1;
+}
+
+/* vendidos encima */
+#progressBarSold{ z-index: 2; }
+#btnContinuarRegistro[disabled]{
+  opacity: .6;
+  cursor: not-allowed;
+  pointer-events: none;
+}
