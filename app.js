@@ -1088,3 +1088,72 @@ window.addEventListener('load', () => {
     }
   });
 });
+
+let VENTAS_HABILITADAS = true;
+
+async function setConfigValor(clave, valor){
+  const { error } = await supabase.from('config').upsert([{ clave, valor }]);
+  if (error) throw new Error(error.message);
+}
+
+function aplicarEstadoVentasUI(){
+  const btn = $('btnParticipar');
+  const badge = $('estadoVentasBadge');
+
+  if (VENTAS_HABILITADAS){
+    if (btn){ btn.disabled = false; btn.textContent = 'Participar'; }
+    if (badge){ badge.textContent = 'Abiertas'; badge.classList.remove('cerrada'); badge.classList.add('abierta'); }
+  }else{
+    if (btn){ btn.disabled = true; btn.textContent = 'Ventas cerradas'; }
+    if (badge){ badge.textContent = 'Cerradas'; badge.classList.remove('abierta'); badge.classList.add('cerrada'); }
+  }
+}
+
+async function loadVentasHabilitadas(){
+  // Guardamos como "1" o "0" en config.valor
+  const v = await getConfigValor('ventas_habilitadas');
+  VENTAS_HABILITADAS = (String(v ?? '1') === '1' || String(v).toLowerCase() === 'true');
+  aplicarEstadoVentasUI();
+}
+
+// Realtime para que el Home/Admin reaccionen si otro admin cambia el estado
+function initRealtimeVentas(){
+  try{
+    supabase
+      .channel('rt-ventas')
+      .on('postgres_changes', { event:'*', schema:'public', table:'config' }, (payload) => {
+        if (payload?.new?.clave === 'ventas_habilitadas'){
+          const val = payload.new.valor;
+          VENTAS_HABILITADAS = (String(val ?? '1') === '1' || String(val).toLowerCase() === 'true');
+          aplicarEstadoVentasUI();
+        }
+      })
+      .subscribe();
+  }catch(e){
+    console.warn('Realtime config no disponible:', e);
+  }
+}
+async function abrirVentas(){
+  try{
+    await setConfigValor('ventas_habilitadas', '1');
+    VENTAS_HABILITADAS = true;
+    aplicarEstadoVentasUI();
+    alert('✅ Ventas abiertas');
+  }catch(e){
+    alert('❌ No se pudo abrir ventas: ' + (e.message || e));
+  }
+}
+window.abrirVentas = abrirVentas;
+
+async function cerrarVentas(){
+  if (!confirm('¿Cerrar ventas ahora? Nadie podrá comprar hasta volver a abrir.')) return;
+  try{
+    await setConfigValor('ventas_habilitadas', '0');
+    VENTAS_HABILITADAS = false;
+    aplicarEstadoVentasUI();
+    alert('🔒 Ventas cerradas');
+  }catch(e){
+    alert('❌ No se pudo cerrar ventas: ' + (e.message || e));
+  }
+}
+window.cerrarVentas = cerrarVentas;
