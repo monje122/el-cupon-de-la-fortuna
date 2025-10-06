@@ -26,6 +26,31 @@
         <img id="fotoInicio" class="img-inicio" style="width:100%;max-width:640px;border-radius:12px;display:block;margin:0 auto 12px;box-shadow:0 2px 16px #0008;">
       
         <h2 id="tituloRifa" style="margin:8px 0;color:var(--brand)">COMBO SOLUCIÓN #6</h2>
+        
+       <!-- PROGRESO DE VENTA -->
+<!-- PROGRESO DE LA RIFA (vendidos + reservados) -->
+<div id="progressWrap" style="margin:12px 0 16px;">
+  <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
+    <span style="font-weight:800; color:var(--brand)">Progreso de la rifa</span>
+    
+  </div>
+
+  <div class="progress">
+    <!-- capa de reservados (fondo) -->
+    <div class="progress__bar progress__bar--reserved" id="progressBarHold" style="width:0%"></div>
+    <!-- capa de vendidos (encima) -->
+    <div class="progress__bar" id="progressBarSold" style="width:0%"></div>
+  </div>
+
+  <div style="display:flex; justify-content:space-between; font-size:.9rem; margin-top:6px; color:#b8c1cc;">
+    <span id="progressPctSold">0% vendidos</span>
+    <span id="progressPctAll">0% con reservados</span>
+    <span id="progressLeft">Quedan 0</span>
+  </div>
+</div>
+
+
+
         <div style="font-size:.9rem;color:#b8c1cc;display:flex;align-items:center;gap:8px;margin-bottom:8px">
           <span>🎯 Boleto</span>
           <span id="precioUnit" style="font-weight:bold;color:#fff">—</span>
@@ -76,7 +101,8 @@
       <input id="telefono" placeholder="Teléfono (+58...)"/>
       <input id="cedula" placeholder="Cédula"/>
       <input id="email" placeholder="Correo"/>
-      <button onclick="validarRegistro()">Continuar</button>
+      <button id="btnContinuarRegistro" onclick="validarRegistro()">Continuar</button>
+
       <button class="btn-inicio" onclick="irInicio()">Inicio</button>
     </section>
 
@@ -158,6 +184,30 @@
   </div>
 </div>
 
+  <div class="card" style="margin-top:12px">
+  <h3 style="margin:0 0 8px 0;">🎯 Meta / Modo de la barra</h3>
+
+  <label for="modoBarraSelect">Modo:</label>
+  <select id="modoBarraSelect" style="max-width:220px;">
+    <option value="total">Total de tickets (tabla)</option>
+    <option value="meta_fija">Meta fija (objetivo manual)</option>
+    <option value="meta_diaria">Meta diaria (solo hoy)</option>
+  </select>
+
+  <div style="display:flex; gap:10px; align-items:center; margin-top:8px;">
+    <label for="metaBarraInput" style="min-width:100px;">Meta:</label>
+    <input type="number" id="metaBarraInput" min="1" placeholder="Ej: 100" style="max-width:140px;">
+    <button onclick="guardarMetaBarra()">Guardar meta</button>
+  </div>
+
+  <p style="font-size:.9rem; opacity:.85; margin-top:8px;">
+    • <b>Total</b>: la barra usa el total real de la tabla <code>tickets</code>.<br>
+    • <b>Meta fija</b>: la barra usa la cifra que pongas (p.ej. 100).<br>
+    • <b>Meta diaria</b>: la barra usa la meta y contabiliza vendidos/reservados de <b>hoy</b>.
+  </p>
+</div>
+  <span id="progressNums" style="font-weight:700; color:#fff"> vendidos:0 —Reservados: 0 — Total: 0</span>    
+        
 <!-- Buscador por ticket -->
 <div class="card" style="margin-top:12px">
   <h3 style="margin:0 0 8px 0;">🔎 Buscar por ticket</h3>
@@ -189,15 +239,7 @@
 
     </section>
 
-    <!-- ========== SORTEADOR ========== -->
-    <section id="sorteador" style="display:none;">
-      <h2>🎰 Sorteador</h2>
-      <div id="maquinaSorteo">000000</div>
-      <button onclick="iniciarSorteo()">Iniciar Sorteo</button>
-      <div id="ganador"></div>
-      <button class="btn-inicio" onclick="irInicio()">Inicio</button>
-    </section>
-
+  
     <!-- Botón admin oculto -->
     <button id="btnAdmin" onclick="mostrarAdmin()" style="display:none;">Admin</button>
   </div>
