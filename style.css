@@ -561,3 +561,34 @@ body.invert .no-invert {
   cursor: not-allowed;
   pointer-events: none;
 }
+
+/* Badge de estado de ventas */
+.badge-ventas{
+  display:inline-block;
+  font-weight:800;
+  padding:4px 10px;
+  border-radius:999px;
+  border:1px solid rgba(255,255,255,.12);
+  box-shadow: 0 2px 8px rgba(0,0,0,.2);
+}
+.badge-ventas.abierta{
+  color:#0b0f14;
+  background: linear-gradient(90deg, var(--brand), var(--brand-2));
+}
+.badge-ventas.cerrada{
+  color:#fff;
+  background:#8a1a1a;
+}
+
+/* Botón peligro (Cerrar ventas) */
+.btn-danger{
+  background:#ff4343;
+  color:#fff;
+}
+.btn-danger:hover{ background:#ff5d5d; }
+
+/* Botones deshabilitados */
+#btnParticipar[disabled],
+#btnContinuarRegistro[disabled]{
+  opacity:.6; cursor:not-allowed; pointer-events:none;
+}
