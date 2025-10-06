@@ -112,6 +112,13 @@ function continuarCompra(){
 /* ========= REGISTRO ========= */
 /* ========= REGISTRO ========= */
 async function validarRegistro(){
+  // ⛔️ evita dobles clics/enter
+  if (registroEnProgreso) return;
+  registroEnProgreso = true;
+
+  const btn = $('btnContinuarRegistro');
+  setBtnBusy(btn, true, 'Procesando…');
+
   const nombre   = $('nombre').value.trim();
   const telefono = $('telefono').value.trim();
   const cedula   = $('cedula').value.trim();
@@ -119,6 +126,8 @@ async function validarRegistro(){
 
   if (!nombre || !telefono || !cedula || !email){
     alert('Completa todos los campos');
+    setBtnBusy(btn, false);
+    registroEnProgreso = false;
     return;
   }
 
@@ -142,7 +151,7 @@ async function validarRegistro(){
     }
     usuarioActual.id = uid;
 
-    // 2) Crear PENDIENTE + RESERVA por 5 minutos (sin bloquear si ya tiene otro)
+    // 2) Crear PENDIENTE + RESERVA por 5 minutos
     const { data: compId, error: errHold } = await supabase.rpc('create_pending_and_hold', {
       _usuario_id: uid,
       _cantidad: cantidadElegida,
@@ -150,11 +159,14 @@ async function validarRegistro(){
     });
     if (errHold) {
       alert(errHold.message || 'No se pudo reservar la cantidad seleccionada. Intenta con menos.');
+      setBtnBusy(btn, false);
+      registroEnProgreso = false;
       return;
     }
 
     // Guardar id de este comprobante pendiente (para subirComprobante)
     usuarioActual.comprobantePendienteId = compId;
+    await actualizarProgreso(); // sube la banda ámbar de “reservados”
 
     // 3) Ir a Pago
     ocultarTodo();
@@ -162,9 +174,15 @@ async function validarRegistro(){
     $('montoPago').textContent =
       `Cantidad de cartones: ${cantidadElegida} — Monto a pagar: ${fmtBs(cantidadElegida * PRECIO_TICKET)}`;
 
+    // opcional: dejar desbloqueado por si vuelven atrás
+    setBtnBusy(btn, false);
+    registroEnProgreso = false;
+
   } catch (e){
     console.error(e);
     alert(e.message || 'Ocurrió un error. Intenta de nuevo.');
+    setBtnBusy(btn, false);   // 🔓 re-habilita si falló
+    registroEnProgreso = false;
   }
 }
 
@@ -209,6 +227,7 @@ async function subirComprobante(){
       _comp_id: compId
     });
     if (fixErr) throw fixErr;
+await actualizarProgreso(); // mantiene la reserva “congelada” en la barra
 
     alert('¡Comprobante enviado! Tu reserva quedó asegurada hasta que el admin apruebe.');
     irInicio();
@@ -333,6 +352,8 @@ async function cargarComprobantes(){
 
   $('totales').textContent =
     `Tickets (solicitados + aprobados): ${totalTickets} | Monto estimado: ${fmtBs(totalMonto)}`;
+  await initControlesMeta();
+
 }
 
 /* aprobar: asigna tickets aleatorios y aprueba en una transacción (RPC) */
@@ -348,6 +369,8 @@ window.aprobarComprobante = async function(id){
     alert('Error al aprobar/asignar: ' + (e.message || e));
   }finally{
     await cargarComprobantes();
+    await actualizarProgreso();  // ⬅️ importante
+  
   }
 };
 
@@ -379,6 +402,7 @@ window.eliminarComprobante = async function(id){
     alert('❌ Error al eliminar: ' + (e.message || e));
   }finally{
     await cargarComprobantes();
+
   }
 };
 
@@ -423,6 +447,10 @@ window.onload = async function(){
   await actualizarPrecioTicket();
   await mostrarFotoInicio();
   seleccionarCantidad(2);
+  
+  await actualizarProgreso();
+  initRealtimeProgreso();
+  setInterval(actualizarProgreso, 20000); 
 
   // Accesos “ocultos” opcionales: ALT+A para mostrar botón admin durante 10s
   document.addEventListener('keydown', function(e){
@@ -693,6 +721,7 @@ async function reiniciarRifa() {
 
     alert('✅ Rifa reiniciada. Archivos borrados, tickets liberados y comprobantes eliminados.');
     await cargarComprobantes();
+    await actualizarProgreso();
   } catch (e) {
     alert('❌ ' + (e.message || e));
   }
@@ -856,3 +885,206 @@ async function buscarTicket(){
   }
 }
 window.buscarTicket = buscarTicket;
+
+/* ===== PROGRESO (vendidos / reservados / total) ===== */
+let PROGRESO = { vendidos: 0, reservados: 0, total: 0 };
+
+function clampPct(x){ return Math.max(0, Math.min(100, x)); }
+
+function actualizarProgresoUI(vendidos, reservados, total){
+  const pctVendidos = total > 0 ? Math.floor((vendidos / total) * 100) : 0;
+  const pctAll      = total > 0 ? Math.floor(((vendidos + reservados) / total) * 100) : 0;
+  const restantes   = Math.max(total - vendidos - reservados, 0);
+
+  const barSold = $('progressBarSold');
+  const barHold = $('progressBarHold');
+  if (barHold) barHold.style.width = clampPct(pctAll) + '%';
+  if (barSold) barSold.style.width = clampPct(pctVendidos) + '%';
+
+  const nums = $('progressNums');
+  const pctS = $('progressPctSold');
+  const pctA = $('progressPctAll');
+  const left = $('progressLeft');
+
+  if (nums) nums.textContent = `Vendidos: ${vendidos.toLocaleString('es-VE')} — Reservados: ${reservados.toLocaleString('es-VE')} — Total: ${total.toLocaleString('es-VE')}`;
+  if (pctS) pctS.textContent = `${pctVendidos}% vendidos`;
+  if (pctA) pctA.textContent = `${pctAll}% con reservados`;
+  if (left) left.textContent = `Quedan ${restantes.toLocaleString('es-VE')}`;
+}
+
+/* Lee totales desde la tabla tickets */
+function hoyISOBounds(){
+  const s = new Date(); s.setHours(0,0,0,0);
+  const e = new Date(); e.setHours(24,0,0,0);
+  return { start: s.toISOString(), end: e.toISOString() };
+}
+
+/* Global (toda la historia) desde tickets */
+async function leerGlobal(){
+  // total real desde la tabla tickets
+  const totalRes = await supabase.from('tickets').select('*', { count:'exact', head:true });
+  const total = totalRes.count || 0;
+
+  const vendRes = await supabase.from('tickets')
+    .select('*', { count:'exact', head:true })
+    .eq('vendido', true);
+  const vendidos = vendRes.count || 0;
+
+  const holdRes = await supabase.from('tickets')
+    .select('*', { count:'exact', head:true })
+    .eq('vendido', false)
+    .not('reservado_por', 'is', null);
+  const reservados = holdRes.count || 0;
+
+  return { vendidos, reservados, total };
+}
+
+/* Diario (solo HOY) desde comprobantes */
+async function leerDiario(){
+  const { start, end } = hoyISOBounds();
+
+  // vendidos hoy = suma de length(tickets) en comprobantes aprobados hoy
+  const { data: aprob, error: e1 } = await supabase
+    .from('comprobantes')
+    .select('tickets, aprobado, rechazado, created_at')
+    .gte('created_at', start).lt('created_at', end)
+    .eq('aprobado', true);
+  if (e1) throw e1;
+
+  let vendidos = 0;
+  (aprob || []).forEach(r => vendidos += Array.isArray(r.tickets) ? r.tickets.length : 0);
+
+  // reservados hoy = suma de cantidad en comprobantes pendientes de hoy
+  const { data: pend, error: e2 } = await supabase
+    .from('comprobantes')
+    .select('cantidad, aprobado, rechazado, created_at')
+    .gte('created_at', start).lt('created_at', end)
+    .eq('aprobado', false).eq('rechazado', false);
+  if (e2) throw e2;
+
+  let reservados = 0;
+  (pend || []).forEach(r => reservados += (r.cantidad || 0));
+
+  return { vendidos, reservados };
+}
+
+/* Decide el modo y devuelve {vendidos,reservados,totalObjetivo} */
+async function leerProgreso(){
+  const modoRaw = (await getConfigValor('barra_modo')) || 'total';
+  const modo = String(modoRaw).toLowerCase();
+  const meta = parseInt(await getConfigValor('barra_meta'), 10) || null;
+
+  if (modo === 'meta_diaria'){
+    const { vendidos, reservados } = await leerDiario();
+    const total = meta || 100; // por si no pusiste meta, usa 100
+    return { vendidos, reservados, total };
+  }
+
+  // Global
+  const g = await leerGlobal();
+
+  if (modo === 'meta_fija'){
+    const total = meta || g.total || 100;
+    return { vendidos: g.vendidos, reservados: g.reservados, total };
+  }
+
+  // modo === 'total' (por defecto)
+  return { vendidos: g.vendidos, reservados: g.reservados, total: g.total };
+}
+
+
+async function actualizarProgreso(){
+  try{
+    const { vendidos, reservados, total } = await leerProgreso();
+    PROGRESO = { vendidos, reservados, total };
+    actualizarProgresoUI(vendidos, reservados, total);
+  }catch(e){
+    console.error('Progreso error:', e);
+  }
+}
+
+/* Realtime: si cambia tickets (insert/update/delete) refrescamos */
+function initRealtimeProgreso(){
+  try{
+    supabase
+      .channel('rt-progress-tickets')
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'tickets' }, actualizarProgreso)
+      .subscribe();
+
+    supabase
+      .channel('rt-progress-comprobantes')
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'comprobantes' }, actualizarProgreso)
+      .subscribe();
+  }catch(e){
+    console.warn('Realtime no disponible. Uso polling.', e);
+  }
+}
+
+
+async function getConfigValor(clave) {
+  const { data, error } = await supabase
+    .from('config')
+    .select('valor')
+    .eq('clave', clave)
+    .maybeSingle();
+  if (error) throw new Error('Config: ' + error.message);
+  return data?.valor ?? null;
+}
+
+async function setConfigValor(clave, valor) {
+  const { error } = await supabase
+    .from('config')
+    .upsert([{ clave, valor }]);
+  if (error) throw new Error('Config set: ' + error.message);
+}
+
+async function guardarMetaBarra(){
+  const modo = (document.getElementById('modoBarraSelect').value || 'total').trim();
+  const meta = parseInt(document.getElementById('metaBarraInput').value, 10) || null;
+
+  await setConfigValor('barra_modo', modo);
+  if (meta) await setConfigValor('barra_meta', meta);
+
+  alert('✅ Meta/Modo guardados');
+  await actualizarProgreso(); // refresca barra
+}
+
+async function initControlesMeta(){
+  const modo = (await getConfigValor('barra_modo')) || 'total';
+  const meta = await getConfigValor('barra_meta');
+
+  const sel = document.getElementById('modoBarraSelect');
+  const inp = document.getElementById('metaBarraInput');
+
+  if (sel) sel.value = modo;
+  if (inp) inp.value = meta || '';
+}
+let registroEnProgreso = false;
+
+function setBtnBusy(btn, busy, txt = 'Procesando…'){
+  if (!btn) return;
+  if (busy){
+    btn.disabled = true;
+    if (!btn.dataset.prev) btn.dataset.prev = btn.textContent || 'Continuar';
+    btn.textContent = txt;
+  }else{
+    btn.disabled = false;
+    if (btn.dataset.prev) btn.textContent = btn.dataset.prev;
+    delete btn.dataset.prev;
+  }
+}
+
+// (opcional) Enter en campos llama una sola vez:
+window.addEventListener('load', () => {
+  ['nombre','telefono','cedula','email'].forEach(id=>{
+    const el = document.getElementById(id);
+    if (el){
+      el.addEventListener('keydown', (ev)=>{
+        if (ev.key === 'Enter'){
+          ev.preventDefault();
+          if (!registroEnProgreso) validarRegistro();
+        }
+      });
+    }
+  });
+});
