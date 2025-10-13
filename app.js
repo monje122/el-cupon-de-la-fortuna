@@ -106,8 +106,13 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
 function continuarCompra(){
+  if (!VENTAS_HABILITADAS){
+    alert('Por ahora las ventas están cerradas. Vuelve más tarde 🙏');
+    return;
+  }
   mostrarRegistro();
 }
+
 
 /* ========= REGISTRO ========= */
 /* ========= REGISTRO ========= */
@@ -118,6 +123,13 @@ async function validarRegistro(){
 
   const btn = $('btnContinuarRegistro');
   setBtnBusy(btn, true, 'Procesando…');
+  if (!VENTAS_HABILITADAS){
+    alert('Las ventas están cerradas en este momento.');
+    setBtnBusy(btn, false);
+    registroEnProgreso = false;
+    return;
+  }
+
 
   const nombre   = $('nombre').value.trim();
   const telefono = $('telefono').value.trim();
@@ -443,6 +455,8 @@ async function mostrarFotoInicio(){
 window.onload = async function(){
   ocultarTodo();
   $('inicio').style.display = '';
+    await loadVentasHabilitadas();
+  initRealtimeVentas();
    await supabase.rpc('liberar_reservas_viejas', { _minutos: 5 });
   await actualizarPrecioTicket();
   await mostrarFotoInicio();
@@ -657,13 +671,14 @@ async function borrarTodoBucket(bucket) {
 async function getConfigValor(clave) {
   const { data, error } = await supabase
     .from('config')
-    .select('valor')
+    .select('valor, updated_at, id')
     .eq('clave', clave)
-    .maybeSingle();
+    .order('updated_at', { ascending: false })
+    .order('id', { ascending: false })
+    .limit(1);
   if (error) throw new Error('Config: ' + error.message);
-  return data?.valor ?? null;
+  return data?.[0]?.valor ?? null;
 }
-
 async function reiniciarRifa() {
   // 0) Obtener la clave de reinicio desde Supabase
   let claveCorrecta;
