@@ -109,19 +109,50 @@
 
     <!-- ========== PAGO ========== -->
     <section id="pago" style="display:none;">
-      <h2>Pago</h2>
-      <p>Realiza tu pago móvil y sube el comprobante:</p>
-      <div id="montoPago" style="font-weight:bold;margin-bottom:10px;"></div>
-      <h3>Pago Móvil</h3>
-      <p>Banco: Banesco(0134)</p>
-      <p>Teléfono:0412-371436</p>
-      <p>Cédula: 26740060</p>
-      <label>Últimos 4 de la referencia</label>
-      <input type="text" id="referencia" maxlength="4" pattern="\d{4}" placeholder="Ej: 1234">
-      <input type="file" id="comprobante"/>
-      <button onclick="subirComprobante()">Enviar</button>
-      <button class="btn-inicio" onclick="irInicio()">Inicio</button>
-    </section>
+  <h2>Pago</h2>
+  <p>Realiza tu pago y sube el comprobante:</p>
+  <div id="montoPago" style="font-weight:bold;margin-bottom:10px;"></div>
+
+  <!-- Pago móvil -->
+  <div class="inst-pago" data-metodo="pago_movil">
+    <p><b>Pago Móvil</b></p>
+    <p>Banco: <b>Banesco (0134)</b></p>
+    <p>Teléfono: <b>0412-371436</b></p>
+    <p>Cédula: <b>26740060</b></p>
+  </div>
+
+  <!-- Transferencia -->
+  <div class="inst-pago" data-metodo="transferencia">
+    <p><b>Transferencia Bancaria</b></p>
+    <p>Banco: <b>Banesco</b></p>
+    <p>Cuenta: <b>0134-0464-01-4641032400</b></p>
+    <p>Titular: <b>Angel Gonzalez</b></p>
+    <p>C.I.: <b>V-26740060</b></p>
+  </div>
+
+  <!-- Zelle -->
+  <div class="inst-pago" data-metodo="zelle">
+    <p><b>Zelle (a partir de 5$)</b></p>
+    <p>Número receptor: <b>9803225187</b></p>
+    <p>Nombre: <b>Atonio Sanchez</b></p>
+  </div>
+
+  <!-- USDT / Binance -->
+  <div class="inst-pago" data-metodo="usdt">
+    <p><b>USDT (a partir de 5$)</b></p>
+    <p>Red preferida: <b>Binance</b></p>
+    <p>ID: <b>76873515</b></p>
+    <p><b>Nota:</b> enviar comprobante.</p>
+  </div>
+
+  <label>Últimos 4 de la referencia</label>
+  <input type="text" id="referencia" maxlength="4" pattern="\d{4}" placeholder="Ej: 1234">
+  <input type="file" id="comprobante"/>
+ 
+  <button onclick="subirComprobante()">Enviar</button>
+  <button class="btn-inicio" onclick="irInicio()">Inicio</button>
+</section>
+
 
     <!-- ========== CONSULTA ========== -->
     <section id="consulta" style="display:none;">
@@ -149,6 +180,11 @@
 <button id="btnMostrarCambioClave" onclick="toggleCambioClave()" style="margin:12px 0;">
   🔐 Cambiar contraseña
 </button>
+          
+          <label for="nuevaTasaUsd">Tasa USD (Bs por USD):</label>
+<input type="number" id="nuevaTasaUsd" min="1" step="0.01" style="width:120px;display:inline;"/>
+<button onclick="guardarTasaUsd()">Guardar</button>
+
 
    <div class="card" style="margin-top:12px">
   <h3 style="margin:0 0 8px 0;">🧰 Estado de ventas</h3>
