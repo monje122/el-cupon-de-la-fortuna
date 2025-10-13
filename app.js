@@ -184,8 +184,8 @@ async function validarRegistro(){
     ocultarTodo();
     $('pago').style.display = '';
     $('montoPago').textContent =
-      `Cantidad de cartones: ${cantidadElegida} — Monto a pagar: ${fmtBs(cantidadElegida * PRECIO_TICKET)}`;
-
+      `Cantidad de cartones: ${cantidadElegida} (Monto a pagar) : ${fmtBs(cantidadElegida * PRECIO_TICKET)}`;
+renderResumenPago();
     // opcional: dejar desbloqueado por si vuelven atrás
     setBtnBusy(btn, false);
     registroEnProgreso = false;
@@ -458,6 +458,8 @@ window.onload = async function(){
     await loadVentasHabilitadas();
   initRealtimeVentas();
    await supabase.rpc('liberar_reservas_viejas', { _minutos: 5 });
+  await actualizarTasaUSD();
+
   await actualizarPrecioTicket();
   await mostrarFotoInicio();
   seleccionarCantidad(2);
@@ -1172,3 +1174,49 @@ async function cerrarVentas(){
   }
 }
 window.cerrarVentas = cerrarVentas;
+
+// ===== USD helpers =====
+let TASA_USD = 40; // fallback por si aún no configuras 'tasa_usd' en la BD
+const fmtUsd = (n) => `$ ${Number(n || 0).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+
+async function actualizarTasaUSD(){
+  try{
+    const v = await getConfigValor('tasa_usd');     // ← lee de public.config (clave: 'tasa_usd')
+    const t = parseFloat(v);
+    if (!isNaN(t) && t > 0) TASA_USD = t;
+  }catch(e){
+    console.warn('No se pudo leer tasa_usd, usando fallback:', e);
+  }
+}
+function renderResumenPago(){
+  const totalBs  = (cantidadElegida || 0) * (PRECIO_TICKET || 0);
+  const totalUsd = TASA_USD > 0 ? (totalBs / TASA_USD) : 0;
+
+  const linea1 = `Cantidad de cartones: ${cantidadElegida} — Total: ${fmtBs(totalBs)}`;
+  const linea2 = `≈ ${fmtUsd(totalUsd)}  (Tasa: ${fmtBs(TASA_USD)} / USD)`;
+
+  const box = document.getElementById('montoPago');
+  if (box){
+    box.innerHTML = `
+      <div style="color:#ffffff;">${linea1}</div>
+      <div style="color:#00ff6d; margin-top:4px;">${linea2}</div>
+    `;
+  }
+}
+
+async function guardarTasaUsd(){
+  const t = parseFloat(document.getElementById('nuevaTasaUsd').value);
+  if (isNaN(t) || t <= 0){ alert('Tasa inválida'); return; }
+  await setConfigValor('tasa_usd', t);
+  await actualizarTasaUSD();
+  alert('✅ Tasa USD actualizada');
+  renderResumenPago(); // refresca si estás en Pago
+}
+window.guardarTasaUsd = guardarTasaUsd;
+
+// Al cargar admin, precargar valor:
+(async () => {
+  const t = await getConfigValor('tasa_usd');
+  const inp = document.getElementById('nuevaTasaUsd');
+  if (inp && t) inp.value = t;
+})();
