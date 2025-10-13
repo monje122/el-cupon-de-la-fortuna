@@ -592,3 +592,14 @@ body.invert .no-invert {
 #btnContinuarRegistro[disabled]{
   opacity:.6; cursor:not-allowed; pointer-events:none;
 }
+
+.inst-pago{
+  background: rgba(0,0,0,.12);
+  border-radius: 10px;
+  padding: 12px;
+  margin: 12px 0;        /* espacio entre bloques */
+}
+.inst-pago p{
+  margin: 8px 0;         /* espacio entre cada dato */
+  line-height: 1.25;
+}
